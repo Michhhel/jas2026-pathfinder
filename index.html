@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le coût caché de l'eau · Pathfinder</title>
+<meta name="description" content="Part du budget consacrée à l'eau par les ménages ivoiriens, selon qu'ils sont raccordés au réseau ou achètent leur eau. EHCVM 2021/22.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<style>
+:root{--ink:#1d2230;--gris:#6b7180;--clair:#d9dce3;--fond:#f4f5f8;--bleu:#1f5fa8;--indigo:#3f3d9e;--violet:#7a4fb0;--rouge:#c0392b;--bg:#fff;--orange:#F77F00;--orange-t:#C45F00;--vert:#009E60;--vert-t:#007A4A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e8eaf0;--gris:#a3a9b8;--clair:#3a3f4c;--fond:#1d212b;--bg:#12151c;--bleu:#6fa3e0;--indigo:#8d8bdc;--violet:#b291de;--rouge:#e57466;--orange:#FF9A33;--orange-t:#FFB066;--vert:#2FC487;--vert-t:#4FD49A}}
+:root[data-theme="dark"]{--ink:#e8eaf0;--gris:#a3a9b8;--clair:#3a3f4c;--fond:#1d212b;--bg:#12151c;--bleu:#6fa3e0;--indigo:#8d8bdc;--violet:#b291de;--rouge:#e57466;--orange:#FF9A33;--orange-t:#FFB066;--vert:#2FC487;--vert-t:#4FD49A}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;line-height:1.5}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+.kicker{font-size:.75rem;font-weight:700;letter-spacing:.04em;color:var(--gris);border-bottom:2px solid var(--ink);padding-bottom:8px}
+h1{font-size:clamp(1.5rem,4.5vw,2.4rem);line-height:1.15;margin:18px 0 10px;font-weight:800}
+.sous{color:var(--gris);max-width:760px}
+h2{font-size:1.15rem;margin:34px 0 4px}.note{font-size:.82rem;color:var(--gris)}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.seg button{font-family:inherit;font-size:.9rem;padding:8px 14px;border-radius:20px;border:1px solid var(--clair);background:var(--bg);color:var(--ink);cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.tuile{background:var(--fond);border-left:6px solid var(--c);border-radius:6px;padding:12px 14px}
+.tuile b{display:block;font-size:1.6rem;color:var(--c);line-height:1.15}.tuile.duo{border-left:none;background:linear-gradient(var(--orange) 0 50%,var(--vert) 50% 100%) left/6px 100% no-repeat,var(--fond);padding-left:18px}.tuile b span{font-size:inherit;color:inherit}.tuile span{font-size:.83rem}
+.panneau{background:var(--fond);border-radius:8px;padding:16px;margin-top:12px}
+.chart{position:relative;height:320px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}th,td{padding:7px 6px;border-bottom:1px solid var(--clair);text-align:right}
+th:first-child,td:first-child{text-align:left}td{white-space:nowrap}th{font-size:.75rem;color:var(--gris);cursor:pointer;user-select:none}
+.tab{overflow-x:auto;max-height:440px;overflow-y:auto}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label{font-size:.85rem;font-weight:600}input[type=number]{width:100%;padding:9px;font-family:inherit;font-size:1rem;border-radius:6px;border:1px solid var(--clair);background:var(--bg);color:var(--ink);margin-top:4px}
+#verdict{font-weight:700;font-size:1.05rem;margin-top:12px}
+footer{margin-top:36px;font-size:.78rem;color:var(--gris);border-top:1px solid var(--clair);padding-top:12px}a{color:var(--vert-t)}
+</style>
+</head>
+<body>
+<main>
+<div class="kicker">JOURNÉE AFRICAINE DE LA STATISTIQUE 2026 · VISUALISATION 2D · ÉQUIPE PATHFINDER</div>
+<h1>Sans robinet, l'eau pèse 1,7 fois plus lourd dans le budget des ménages</h1>
+<p class="sous">Version interactive de la planche. Comparez les ménages raccordés au réseau et ceux qui, non raccordés, achètent leur eau à un voisin ou à un revendeur.</p>
+
+<div class="seg" id="mil"></div>
+<div class="tuiles" id="tuiles"></div>
+
+<h2>Part du budget consacrée à l'eau, selon le niveau de vie</h2>
+<p class="note">Moyenne des parts par ménage, en % de la consommation annuelle totale ; barres d'erreur : IC à 95 %. Quintiles de consommation par tête calculés sur l'ensemble du pays. Les cases vides correspondent à moins de 30 ménages enquêtés.</p>
+<div class="panneau"><div class="chart"><canvas id="cq"></canvas></div></div>
+
+<h2>Et chez vous ?</h2>
+<p class="note">Calcul indicatif, rien n'est enregistré ni envoyé.</p>
+<div class="panneau calc">
+ <div><label for="dep">Dépense en eau du ménage, FCFA par mois</label><input type="number" id="dep" min="0" step="500" value="3200"></div>
+ <div><label for="bud">Dépenses totales du ménage, FCFA par mois</label><input type="number" id="bud" min="1" step="5000" value="160000"></div>
+ <div style="grid-column:1/-1" id="verdict"></div>
+</div>
+
+<h2>Les 33 régions</h2>
+<p class="note">Personnes vivant dans un ménage non raccordé qui achète son eau. Cliquez sur un en-tête pour trier. Estimations régionales à marge d'erreur large.</p>
+<div class="panneau tab"><table id="tab"><thead><tr><th data-k="region">Région</th><th data-k="pers_milliers">Personnes (milliers)</th><th data-k="pct">% de la population</th><th data-k="lo">IC 95 %</th><th data-k="n_ach">Ménages enquêtés</th></tr></thead><tbody></tbody></table></div>
+
+<footer>
+<p><b>Champ, source et méthode.</b> Ménages ordinaires, Côte d'Ivoire, 2021/22. EHCVM 2021/22 (ANStat), 12 965 ménages ; estimations pondérées, intervalles de confiance à 95 % par linéarisation (66 strates, 1 081 grappes). Dépense en eau : facture d'eau courante, achats à un revendeur ou à un autre ménage, eau en bouteille ou filtrée, abonnement au réseau, annualisés (agrégat de consommation de l'EHCVM). Budget : consommation totale annuelle du ménage. Raccordé : branché au réseau d'eau courante (question 11.21). Acheteur non raccordé : non branché et achète son eau auprès de vendeurs ou d'un autre ménage (question 11.24). Seuil de 3 % : PNUD, Rapport sur le développement humain 2006 (rapporté au revenu ; ici à la consommation). Les dépenses n'incluent ni le temps de corvée ni le coût d'un branchement.</p>
+<p>Équipe Pathfinder · YAO N'Guessan Michel, ENSEA Abidjan · <a href="../">autres visualisations</a> · <a href="../telechargements/Projet2_D_cout_cache_eau.pdf">planche PDF</a> · <a href="donnees.json">données</a></p>
+</footer>
+</main>
+<script>
+const D={
+"groupes": [
+{
+"milieu": "Ensemble",
+"groupe": "raccordé",
+"n": 3645,
+"part_menages_pct": 37.2735,
+"part_pop_pct": 37.474,
+"depense_annuelle_FCFA": 40334.5872,
+"depense_annuelle_FCFA_ic_bas": 36536.2236,
+"depense_annuelle_FCFA_ic_haut": 44132.9508,
+"part_budget": 1.1271,
+"part_budget_ic_bas": 1.0631,
+"part_budget_ic_haut": 1.1912,
+"sup3_pct": 5.8863,
+"sup3_lo": 4.8833,
+"sup3_hi": 7.08,
+"pcexp_med": 605713.125,
+"temps_ar_min": 2.6631
+},
+{
+"milieu": "Ensemble",
+"groupe": "achète (non raccordé)",
+"n": 1467,
+"part_menages_pct": 13.0898,
+"part_pop_pct": 11.6456,
+"depense_annuelle_FCFA": 38140.2009,
+"depense_annuelle_FCFA_ic_bas": 34896.3504,
+"depense_annuelle_FCFA_ic_haut": 41384.0513,
+"part_budget": 1.9069,
+"part_budget_ic_bas": 1.7341,
+"part_budget_ic_haut": 2.0798,
+"sup3_pct": 16.8189,
+"sup3_lo": 13.0003,
+"sup3_hi": 21.4823,
+"pcexp_med": 481228.3438,
+"temps_ar_min": 38.8789,
+"pers_millions": 3.4715
+},
+{
+"milieu": "Ensemble",
+"groupe": "ne paie pas / autre",
+"n": 7853,
+"part_menages_pct": 49.6367,
+"part_pop_pct": 50.8804,
+"depense_annuelle_FCFA": 809.6892,
+"depense_annuelle_FCFA_ic_bas": 601.5083,
+"depense_annuelle_FCFA_ic_haut": 1017.87,
+"part_budget": 0.0323,
+"part_budget_ic_bas": 0.0251,
+"part_budget_ic_haut": 0.0395,
+"sup3_pct": 0.0748,
+"sup3_lo": 0.0304,
+"sup3_hi": 0.1843,
+"pcexp_med": 394783.0312,
+"temps_ar_min": 33.8585
+},
+{
+"milieu": "Urbain",
+"groupe": "raccordé",
+"n": 2602,
+"part_menages_pct": 55.9936,
+"part_pop_pct": 58.5894,
+"depense_annuelle_FCFA": 44728.6088,
+"depense_annuelle_FCFA_ic_bas": 40231.7201,
+"depense_annuelle_FCFA_ic_haut": 49225.4974,
+"part_budget": 1.167,
+"part_budget_ic_bas": 1.0939,
+"part_budget_ic_haut": 1.2401,
+"sup3_pct": 6.1936,
+"sup3_lo": 5.0234,
+"sup3_hi": 7.6145,
+"pcexp_med": 664303.2812,
+"temps_ar_min": 2.4242
+},
+{
+"milieu": "Urbain",
+"groupe": "achète (non raccordé)",
+"n": 655,
+"part_menages_pct": 15.5252,
+"part_pop_pct": 13.344,
+"depense_annuelle_FCFA": 42603.9485,
+"depense_annuelle_FCFA_ic_bas": 37414.7104,
+"depense_annuelle_FCFA_ic_haut": 47793.1866,
+"part_budget": 1.9429,
+"part_budget_ic_bas": 1.6858,
+"part_budget_ic_haut": 2.2,
+"sup3_pct": 17.9099,
+"sup3_lo": 12.3105,
+"sup3_hi": 25.3207,
+"pcexp_med": 584082.9375,
+"temps_ar_min": 27.0644,
+"pers_millions": 2.0963
+},
+{
+"milieu": "Urbain",
+"groupe": "ne paie pas / autre",
+"n": 1986,
+"part_menages_pct": 28.4811,
+"part_pop_pct": 28.0666,
+"depense_annuelle_FCFA": 1493.0761,
+"depense_annuelle_FCFA_ic_bas": 902.4083,
+"depense_annuelle_FCFA_ic_haut": 2083.7439,
+"part_budget": 0.0493,
+"part_budget_ic_bas": 0.0332,
+"part_budget_ic_haut": 0.0654,
+"sup3_pct": 0.1041,
+"sup3_lo": 0.0259,
+"sup3_hi": 0.4171,
+"pcexp_med": 449652.9219,
+"temps_ar_min": 18.3029
+},
+{
+"milieu": "Rural",
+"groupe": "raccordé",
+"n": 1043,
+"part_menages_pct": 14.773,
+"part_pop_pct": 13.948,
+"depense_annuelle_FCFA": 20316.7434,
+"depense_annuelle_FCFA_ic_bas": 17274.0506,
+"depense_annuelle_FCFA_ic_haut": 23359.4362,
+"part_budget": 0.9456,
+"part_budget_ic_bas": 0.8254,
+"part_budget_ic_haut": 1.0657,
+"sup3_pct": 4.4863,
+"sup3_lo": 3.1479,
+"sup3_hi": 6.3566,
+"pcexp_med": 489894.5,
+"temps_ar_min": 3.7616
+},
+{
+"milieu": "Rural",
+"groupe": "achète (non raccordé)",
+"n": 812,
+"part_menages_pct": 10.1625,
+"part_pop_pct": 9.7533,
+"depense_annuelle_FCFA": 29943.848,
+"depense_annuelle_FCFA_ic_bas": 27050.8231,
+"depense_annuelle_FCFA_ic_haut": 32836.8729,
+"part_budget": 1.8409,
+"part_budget_ic_bas": 1.6707,
+"part_budget_ic_haut": 2.0111,
+"sup3_pct": 14.8157,
+"sup3_lo": 11.7489,
+"sup3_hi": 18.5151,
+"pcexp_med": 410879.1406,
+"temps_ar_min": 56.9193,
+"pers_millions": 1.3752
+},
+{
+"milieu": "Rural",
+"groupe": "ne paie pas / autre",
+"n": 5867,
+"part_menages_pct": 75.0645,
+"part_pop_pct": 76.2987,
+"depense_annuelle_FCFA": 498.0347,
+"depense_annuelle_FCFA_ic_bas": 356.9752,
+"depense_annuelle_FCFA_ic_haut": 639.0942,
+"part_budget": 0.0245,
+"part_budget_ic_bas": 0.017,
+"part_budget_ic_haut": 0.0321,
+"sup3_pct": 0.0615,
+"sup3_lo": 0.0188,
+"sup3_hi": 0.2008,
+"pcexp_med": 377106.5625,
+"temps_ar_min": 40.7749
+}
+],
+"quintiles": [
+{
+"groupe": "raccordé",
+"quintile": 1,
+"n": 274,
+"part_budget": 1.5788,
+"lo": 1.2625,
+"hi": 1.8951,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 2,
+"n": 458,
+"part_budget": 1.2185,
+"lo": 1.076,
+"hi": 1.361,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 3,
+"n": 608,
+"part_budget": 1.015,
+"lo": 0.9043,
+"hi": 1.1256,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 4,
+"n": 884,
+"part_budget": 1.1401,
+"lo": 1.03,
+"hi": 1.2503,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 5,
+"n": 1421,
+"part_budget": 1.0939,
+"lo": 0.9952,
+"hi": 1.1926,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 1,
+"n": 197,
+"part_budget": 2.7,
+"lo": 2.217,
+"hi": 3.1829,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 2,
+"n": 287,
+"part_budget": 1.8612,
+"lo": 1.6319,
+"hi": 2.0904,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 3,
+"n": 287,
+"part_budget": 1.9371,
+"lo": 1.6822,
+"hi": 2.1919,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 4,
+"n": 346,
+"part_budget": 1.9749,
+"lo": 1.6969,
+"hi": 2.2528,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 5,
+"n": 350,
+"part_budget": 1.642,
+"lo": 1.4399,
+"hi": 1.8441,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 1,
+"n": 135,
+"part_budget": 1.9038,
+"lo": 1.4351,
+"hi": 2.3725,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 2,
+"n": 253,
+"part_budget": 1.3345,
+"lo": 1.1358,
+"hi": 1.5332,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 3,
+"n": 408,
+"part_budget": 1.0758,
+"lo": 0.9471,
+"hi": 1.2046,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 4,
+"n": 646,
+"part_budget": 1.1861,
+"lo": 1.0572,
+"hi": 1.3149,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 5,
+"n": 1160,
+"part_budget": 1.1112,
+"lo": 1.0058,
+"hi": 1.2167,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 1,
+"n": 49,
+"part_budget": 3.6675,
+"lo": 2.6392,
+"hi": 4.6958,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 2,
+"n": 80,
+"part_budget": 2.0517,
+"lo": 1.6134,
+"hi": 2.4899,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 3,
+"n": 119,
+"part_budget": 2.0052,
+"lo": 1.6162,
+"hi": 2.3941,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 4,
+"n": 182,
+"part_budget": 2.0341,
+"lo": 1.6718,
+"hi": 2.3964,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 5,
+"n": 225,
+"part_budget": 1.6187,
+"lo": 1.3863,
+"hi": 1.8511,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 1,
+"n": 139,
+"part_budget": 1.0596,
+"lo": 0.8182,
+"hi": 1.301,
+"milieu": "Rural"
+},
+{
+"groupe": "raccordé",
+"quintile": 2,
+"n": 205,
+"part_budget": 1.0191,
+"lo": 0.8513,
+"hi": 1.1869,
+"milieu": "Rural"
+},
+{
+"groupe": "raccordé",
+"quintile": 3,
+"n": 200,
+"part_budget": 0.8311,
+"lo": 0.621,
+"hi": 1.0412,
+"milieu": "Rural"
+},
+{
+"groupe": "raccordé",
+"quintile": 4,
+"n": 238,
+"part_budget": 0.9369,
+"lo": 0.7711,
+"hi": 1.1027,
+"milieu": "Rural"
+},
+{
+"groupe": "raccordé",
+"quintile": 5,
+"n": 261,
+"part_budget": 0.9458,
+"lo": 0.6793,
+"hi": 1.2123,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 1,
+"n": 148,
+"part_budget": 2.122,
+"lo": 1.6889,
+"hi": 2.5552,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 2,
+"n": 207,
+"part_budget": 1.73,
+"lo": 1.4844,
+"hi": 1.9756,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 3,
+"n": 168,
+"part_budget": 1.8324,
+"lo": 1.5998,
+"hi": 2.065,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 4,
+"n": 164,
+"part_budget": 1.8402,
+"lo": 1.4181,
+"hi": 2.2623,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 5,
+"n": 125,
+"part_budget": 1.7443,
+"lo": 1.4671,
+"hi": 2.0216,
+"milieu": "Rural"
+}
+],
+"regions": [
+{
+"region": "AUTONOME D'ABIDJAN",
+"pers_milliers": 995.163,
+"pop_region_milliers": 6411.407,
+"pct": 15.522,
+"lo": 10.082,
+"hi": 23.142,
+"n_ach": 135,
+"n": 983
+},
+{
+"region": "gontougo",
+"pers_milliers": 265.903,
+"pop_region_milliers": 930.953,
+"pct": 28.562,
+"lo": 21.447,
+"hi": 36.929,
+"n_ach": 124,
+"n": 408
+},
+{
+"region": "gbeke",
+"pers_milliers": 242.209,
+"pop_region_milliers": 1372.247,
+"pct": 17.651,
+"lo": 12.113,
+"hi": 24.999,
+"n_ach": 81,
+"n": 503
+},
+{
+"region": "SUD-COMOE",
+"pers_milliers": 173.076,
+"pop_region_milliers": 796.118,
+"pct": 21.74,
+"lo": 14.029,
+"hi": 32.106,
+"n_ach": 105,
+"n": 408
+},
+{
+"region": "AGNEBY-TIASSA",
+"pers_milliers": 165.743,
+"pop_region_milliers": 878.334,
+"pct": 18.87,
+"lo": 11.224,
+"hi": 29.968,
+"n_ach": 67,
+"n": 408
+},
+{
+"region": "marahoue",
+"pers_milliers": 141.836,
+"pop_region_milliers": 995.21,
+"pct": 14.252,
+"lo": 8.952,
+"hi": 21.934,
+"n_ach": 85,
+"n": 480
+},
+{
+"region": "hambol",
+"pers_milliers": 116.593,
+"pop_region_milliers": 620.781,
+"pct": 18.782,
+"lo": 13.031,
+"hi": 26.302,
+"n_ach": 64,
+"n": 336
+},
+{
+"region": "HAUT-SASSANDRA",
+"pers_milliers": 106.703,
+"pop_region_milliers": 1764.575,
+"pct": 6.047,
+"lo": 3.079,
+"hi": 11.537,
+"n_ach": 44,
+"n": 600
+},
+{
+"region": "tonkpi",
+"pers_milliers": 105.178,
+"pop_region_milliers": 1407.756,
+"pct": 7.471,
+"lo": 4.186,
+"hi": 12.986,
+"n_ach": 34,
+"n": 504
+},
+{
+"region": "gÔh",
+"pers_milliers": 99.072,
+"pop_region_milliers": 999.371,
+"pct": 9.913,
+"lo": 6.543,
+"hi": 14.746,
+"n_ach": 41,
+"n": 479
+},
+{
+"region": "SAN-PEDRO",
+"pers_milliers": 98.323,
+"pop_region_milliers": 1075.892,
+"pct": 9.139,
+"lo": 5.588,
+"hi": 14.596,
+"n_ach": 43,
+"n": 444
+},
+{
+"region": "INDENIE-DJUABLIN",
+"pers_milliers": 96.693,
+"pop_region_milliers": 726.688,
+"pct": 13.306,
+"lo": 7.36,
+"hi": 22.869,
+"n_ach": 59,
+"n": 384
+},
+{
+"region": "LÔH-DJIBOUA",
+"pers_milliers": 89.62,
+"pop_region_milliers": 1118.933,
+"pct": 8.009,
+"lo": 4.332,
+"hi": 14.342,
+"n_ach": 27,
+"n": 432
+},
+{
+"region": "iffou",
+"pers_milliers": 88.439,
+"pop_region_milliers": 383.973,
+"pct": 23.033,
+"lo": 15.382,
+"hi": 33.004,
+"n_ach": 61,
+"n": 288
+},
+{
+"region": "belier",
+"pers_milliers": 73.06,
+"pop_region_milliers": 421.536,
+"pct": 17.332,
+"lo": 11.445,
+"hi": 25.379,
+"n_ach": 63,
+"n": 312
+},
+{
+"region": "LA ME",
+"pers_milliers": 67.307,
+"pop_region_milliers": 737.056,
+"pct": 9.132,
+"lo": 5.315,
+"hi": 15.249,
+"n_ach": 32,
+"n": 384
+},
+{
+"region": "GRANDS-PONTS",
+"pers_milliers": 62.672,
+"pop_region_milliers": 456.442,
+"pct": 13.731,
+"lo": 7.762,
+"hi": 23.136,
+"n_ach": 41,
+"n": 312
+},
+{
+"region": "moronou",
+"pers_milliers": 60.292,
+"pop_region_milliers": 446.044,
+"pct": 13.517,
+"lo": 8.549,
+"hi": 20.719,
+"n_ach": 52,
+"n": 311
+},
+{
+"region": "nawa",
+"pers_milliers": 58.308,
+"pop_region_milliers": 1182.138,
+"pct": 4.932,
+"lo": 2.423,
+"hi": 9.78,
+"n_ach": 25,
+"n": 527
+},
+{
+"region": "N'ZI",
+"pers_milliers": 57.768,
+"pop_region_milliers": 258.264,
+"pct": 22.368,
+"lo": 15.847,
+"hi": 30.597,
+"n_ach": 66,
+"n": 264
+},
+{
+"region": "bere",
+"pers_milliers": 52.609,
+"pop_region_milliers": 499.189,
+"pct": 10.539,
+"lo": 5.553,
+"hi": 19.096,
+"n_ach": 32,
+"n": 312
+},
+{
+"region": "worodougou",
+"pers_milliers": 48.081,
+"pop_region_milliers": 435.958,
+"pct": 11.029,
+"lo": 4.949,
+"hi": 22.788,
+"n_ach": 24,
+"n": 264
+},
+{
+"region": "yamoussoukro",
+"pers_milliers": 47.019,
+"pop_region_milliers": 428.108,
+"pct": 10.983,
+"lo": 5.949,
+"hi": 19.398,
+"n_ach": 46,
+"n": 312
+},
+{
+"region": "poro",
+"pers_milliers": 28.209,
+"pop_region_milliers": 1055.339,
+"pct": 2.673,
+"lo": 1.348,
+"hi": 5.229,
+"n_ach": 14,
+"n": 455
+},
+{
+"region": "bounkani",
+"pers_milliers": 26.935,
+"pop_region_milliers": 433.143,
+"pct": 6.218,
+"lo": 2.494,
+"hi": 14.666,
+"n_ach": 15,
+"n": 264
+},
+{
+"region": "guemon",
+"pers_milliers": 22.098,
+"pop_region_milliers": 944.184,
+"pct": 2.34,
+"lo": 1.09,
+"hi": 4.953,
+"n_ach": 11,
+"n": 480
+},
+{
+"region": "gbÔkle",
+"pers_milliers": 19.318,
+"pop_region_milliers": 467.572,
+"pct": 4.132,
+"lo": 0.846,
+"hi": 17.876,
+"n_ach": 15,
+"n": 336
+},
+{
+"region": "bagoue",
+"pers_milliers": 19.035,
+"pop_region_milliers": 523.267,
+"pct": 3.638,
+"lo": 1.432,
+"hi": 8.931,
+"n_ach": 17,
+"n": 312
+},
+{
+"region": "tchologo",
+"pers_milliers": 15.61,
+"pop_region_milliers": 611.708,
+"pct": 2.552,
+"lo": 1.002,
+"hi": 6.347,
+"n_ach": 11,
+"n": 359
+},
+{
+"region": "kabadougou",
+"pers_milliers": 8.948,
+"pop_region_milliers": 293.95,
+"pct": 3.044,
+"lo": 1.078,
+"hi": 8.294,
+"n_ach": 9,
+"n": 240
+},
+{
+"region": "folon",
+"pers_milliers": 7.513,
+"pop_region_milliers": 148.3,
+"pct": 5.066,
+"lo": 1.79,
+"hi": 13.509,
+"n_ach": 15,
+"n": 264
+},
+{
+"region": "cavally",
+"pers_milliers": 7.238,
+"pop_region_milliers": 718.369,
+"pct": 1.008,
+"lo": 0.245,
+"hi": 4.05,
+"n_ach": 3,
+"n": 360
+},
+{
+"region": "bafing",
+"pers_milliers": 4.915,
+"pop_region_milliers": 266.609,
+"pct": 1.843,
+"lo": 0.428,
+"hi": 7.59,
+"n_ach": 6,
+"n": 240
+}
+]
+};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fr=(x,d=1)=>x==null?'—':x.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const R='raccordé',A='achète (non raccordé)';
+const NOMS={"AUTONOME D'ABIDJAN":"District d'Abidjan","HAUT-SASSANDRA":"Haut-Sassandra","poro":"Poro","gbeke":"Gbêkê","INDENIE-DJUABLIN":"Indénié-Djuablin","tonkpi":"Tonkpi","yamoussoukro":"Yamoussoukro","gontougo":"Gontougo","SAN-PEDRO":"San-Pédro","kabadougou":"Kabadougou","N'ZI":"N'Zi","marahoue":"Marahoué","SUD-COMOE":"Sud-Comoé","worodougou":"Worodougou","LÔH-DJIBOUA":"Lôh-Djiboua","AGNEBY-TIASSA":"Agnéby-Tiassa","gÔh":"Gôh","cavally":"Cavally","bafing":"Bafing","bagoue":"Bagoué","belier":"Bélier","bere":"Béré","bounkani":"Bounkani","folon":"Folon","gbÔkle":"Gbôklé","GRANDS-PONTS":"Grands-Ponts","guemon":"Guémon","hambol":"Hambol","iffou":"Iffou","LA ME":"La Mé","nawa":"Nawa","tchologo":"Tchologo","moronou":"Moronou"};
+let mil='Ensemble',chart;
+const seg=document.getElementById('mil');
+['Ensemble','Urbain','Rural'].forEach(m=>{const b=document.createElement('button');b.textContent=m==='Ensemble'?'Ensemble du pays':m;b.onclick=()=>{mil=m;maj()};b.dataset.m=m;seg.appendChild(b)});
+function g(m,grp){return D.groupes.find(x=>x.milieu===m&&x.groupe===grp)}
+function maj(){
+ [...seg.children].forEach(b=>b.classList.toggle('on',b.dataset.m===mil));
+ const a=g(mil,A),r=g(mil,R);
+ const r2=x=>Math.round(x*100+1e-9)/100, pa=r2(a.part_budget), pr=r2(r.part_budget);
+ const big=(t,c)=>`<b style="color:var(${c})">${t}</b>`;
+ document.getElementById('tuiles').innerHTML=`
+ <div class="tuile" style="--c:var(--orange)">${big(fr(a.pers_millions,1)+' million'+(a.pers_millions>=1.95?'s':''),'--orange-t')}<span>de personnes vivent dans un ménage non raccordé qui achète son eau (${fr(a.part_pop_pct)} % de la population)</span></div>
+ <div class="tuile duo"><b><span style="color:var(--orange-t)">${fr(pa,2)} %</span> <span style="color:var(--gris)">/</span> <span style="color:var(--vert-t)">${fr(pr,2)} %</span></b><span>du budget consacré à l'eau (acheteurs / raccordés), soit ${fr(pa-pr,1)} point de pourcentage de plus pour les acheteurs (× ${fr(pa/pr,1)})</span></div>
+ <div class="tuile duo"><b><span style="color:var(--orange-t)">${fr(a.sup3_pct,0)} %</span> <span style="color:var(--gris)">/</span> <span style="color:var(--vert-t)">${fr(r.sup3_pct,0)} %</span></b><span>des ménages dépassent le seuil de 3 % du budget (acheteurs / raccordés)</span></div>
+ <div class="tuile duo"><b><span style="color:var(--orange-t)">${fr(a.temps_ar_min,0)} min</span> <span style="color:var(--gris)">/</span> <span style="color:var(--vert-t)">${fr(r.temps_ar_min,0)} min</span></b><span>de trajet aller-retour moyen vers la source d'eau ; dépense annuelle : ${fr(Math.round(a.depense_annuelle_FCFA/100)*100,0)} / ${fr(Math.round(r.depense_annuelle_FCFA/100)*100,0)} FCFA</span></div>`;
+ const q=D.quintiles.filter(x=>x.milieu===mil);
+ const ser=grp=>[1,2,3,4,5].map(k=>{const z=q.find(x=>x.groupe===grp&&x.quintile===k);return z&&z.part_budget!=null?z:null});
+ const sa=ser(A),sr=ser(R);
+ const lab=['20 % les plus modestes','2e quintile','3e quintile','4e quintile','20 % les plus aisés'];
+ const ds=(s,lbl,c)=>({label:lbl,data:s.map(z=>z?z.part_budget:null),backgroundColor:c,borderRadius:4,lo:s.map(z=>z?z.lo:null),hi:s.map(z=>z?z.hi:null)});
+ const data={labels:lab,datasets:[ds(sa,'Non raccordés qui achètent leur eau',css('--orange')),ds(sr,'Raccordés au réseau',css('--vert'))]};
+ const err={id:'err',afterDatasetsDraw(c){const x=c.ctx;x.save();x.strokeStyle=css('--ink');x.lineWidth=1.2;
+   c.data.datasets.forEach((d,i)=>{c.getDatasetMeta(i).data.forEach((b,j)=>{if(d.lo[j]==null)return;const y1=c.scales.y.getPixelForValue(d.lo[j]),y2=c.scales.y.getPixelForValue(d.hi[j]);x.beginPath();x.moveTo(b.x,y1);x.lineTo(b.x,y2);x.moveTo(b.x-4,y1);x.lineTo(b.x+4,y1);x.moveTo(b.x-4,y2);x.lineTo(b.x+4,y2);x.stroke()})});
+   const y3=c.scales.y.getPixelForValue(3);x.setLineDash([6,4]);x.strokeStyle=css('--ink');x.beginPath();x.moveTo(c.chartArea.left,y3);x.lineTo(c.chartArea.right,y3);x.stroke();
+   x.setLineDash([]);x.fillStyle=css('--ink');x.font='600 12px Montserrat';x.textAlign='right';x.fillText("seuil d'abordabilité : 3 %",c.chartArea.right-4,y3-6);x.restore()}};
+ const opt={responsive:true,maintainAspectRatio:false,animation:false,scales:{y:{min:0,max:5,ticks:{stepSize:1,callback:v=>fr(v,0)+' %',color:css('--gris')},grid:{color:css('--clair')}},x:{ticks:{color:css('--gris')},grid:{display:false}}},
+  plugins:{legend:{labels:{color:css('--ink')}},tooltip:{callbacks:{label:t=>`${t.dataset.label} : ${fr(t.parsed.y,2)} % (IC ${fr(t.dataset.lo[t.dataIndex],2)} à ${fr(t.dataset.hi[t.dataIndex],2)})`}}}};
+ if(chart)chart.destroy();chart=new Chart(document.getElementById('cq'),{type:'bar',data,options:opt,plugins:[err]});
+}
+maj();
+function calc(){const d=+document.getElementById('dep').value,b=+document.getElementById('bud').value,v=document.getElementById('verdict');
+ if(!(b>0)){v.textContent='';return}const p=100*d/b;
+ v.innerHTML=`Votre ménage consacre <span style="color:${p>3?css('--orange-t'):css('--vert-t')}">${fr(p,2)} %</span> de son budget à l'eau. ${p>3?'C\'est au-delà du seuil d\'abordabilité de 3 %.':'C\'est en deçà du seuil d\'abordabilité de 3 %.'} Moyenne nationale : ${fr(g('Ensemble',A).part_budget,2)} % pour les ménages qui achètent leur eau, ${fr(g('Ensemble',R).part_budget,2)} % pour les ménages raccordés.`}
+document.getElementById('dep').oninput=calc;document.getElementById('bud').oninput=calc;calc();
+let tri={k:'pers_milliers',s:-1};const tb=document.querySelector('#tab tbody');
+function tab(){const rows=[...D.regions].sort((a,b)=>{const x=tri.k==='region'?NOMS[a.region]:a[tri.k],y=tri.k==='region'?NOMS[b.region]:b[tri.k];return (x>y?1:x<y?-1:0)*tri.s});
+ tb.innerHTML=rows.map(r=>`<tr><td>${NOMS[r.region]||r.region}</td><td>${fr(r.pers_milliers,0)}</td><td>${fr(r.pct)} %</td><td>${fr(r.lo)} à ${fr(r.hi)} %</td><td>${r.n_ach}</td></tr>`).join('')}
+document.querySelectorAll('#tab th').forEach(th=>th.onclick=()=>{tri.s=tri.k===th.dataset.k?-tri.s:(th.dataset.k==='region'?1:-1);tri.k=th.dataset.k;tab()});tab();
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le coût caché de l'eau · Pathfinder</title>
+<meta name="description" content="Part du budget consacrée à l'eau par les ménages ivoiriens, selon qu'ils sont raccordés au réseau ou achètent leur eau. EHCVM 2021/22.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<style>
+:root{--ink:#1d2230;--gris:#6b7180;--clair:#d9dce3;--fond:#f4f5f8;--bleu:#1f5fa8;--indigo:#3f3d9e;--violet:#7a4fb0;--rouge:#c0392b;--bg:#fff;--orange:#F77F00;--orange-t:#C45F00;--vert:#009E60;--vert-t:#007A4A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e8eaf0;--gris:#a3a9b8;--clair:#3a3f4c;--fond:#1d212b;--bg:#12151c;--bleu:#6fa3e0;--indigo:#8d8bdc;--violet:#b291de;--rouge:#e57466;--orange:#FF9A33;--orange-t:#FFB066;--vert:#2FC487;--vert-t:#4FD49A}}
+:root[data-theme="dark"]{--ink:#e8eaf0;--gris:#a3a9b8;--clair:#3a3f4c;--fond:#1d212b;--bg:#12151c;--bleu:#6fa3e0;--indigo:#8d8bdc;--violet:#b291de;--rouge:#e57466;--orange:#FF9A33;--orange-t:#FFB066;--vert:#2FC487;--vert-t:#4FD49A}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;line-height:1.5}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+.kicker{font-size:.75rem;font-weight:700;letter-spacing:.04em;color:var(--gris);border-bottom:2px solid var(--ink);padding-bottom:8px}
+h1{font-size:clamp(1.5rem,4.5vw,2.4rem);line-height:1.15;margin:18px 0 10px;font-weight:800}
+.sous{color:var(--gris);max-width:760px}
+h2{font-size:1.15rem;margin:34px 0 4px}.note{font-size:.82rem;color:var(--gris)}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.seg button{font-family:inherit;font-size:.9rem;padding:8px 14px;border-radius:20px;border:1px solid var(--clair);background:var(--bg);color:var(--ink);cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.tuile{background:var(--fond);border-left:6px solid var(--c);border-radius:6px;padding:12px 14px}
+.tuile b{display:block;font-size:1.6rem;color:var(--c);line-height:1.15}.tuile.duo{border-left:none;background:linear-gradient(var(--orange) 0 50%,var(--vert) 50% 100%) left/6px 100% no-repeat,var(--fond);padding-left:18px}.tuile b span{font-size:inherit;color:inherit}.tuile span{font-size:.83rem}
+.panneau{background:var(--fond);border-radius:8px;padding:16px;margin-top:12px}
+.chart{position:relative;height:320px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}th,td{padding:7px 6px;border-bottom:1px solid var(--clair);text-align:right}
+th:first-child,td:first-child{text-align:left}td{white-space:nowrap}th{font-size:.75rem;color:var(--gris);cursor:pointer;user-select:none}
+.tab{overflow-x:auto;max-height:440px;overflow-y:auto}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label{font-size:.85rem;font-weight:600}input[type=number]{width:100%;padding:9px;font-family:inherit;font-size:1rem;border-radius:6px;border:1px solid var(--clair);background:var(--bg);color:var(--ink);margin-top:4px}
+#verdict{font-weight:700;font-size:1.05rem;margin-top:12px}
+footer{margin-top:36px;font-size:.78rem;color:var(--gris);border-top:1px solid var(--clair);padding-top:12px}a{color:var(--vert-t)}
+</style>
+</head>
+<body>
+<main>
+<div class="kicker">JOURNÉE AFRICAINE DE LA STATISTIQUE 2026 · VISUALISATION 2D · ÉQUIPE PATHFINDER</div>
+<h1>Sans robinet, l'eau pèse 1,7 fois plus lourd dans le budget des ménages</h1>
+<p class="sous">Version interactive de la planche. Comparez les ménages raccordés au réseau et ceux qui, non raccordés, achètent leur eau à un voisin ou à un revendeur.</p>
+
+<div class="seg" id="mil"></div>
+<div class="tuiles" id="tuiles"></div>
+
+<h2>Part du budget consacrée à l'eau, selon le niveau de vie</h2>
+<p class="note">Moyenne des parts par ménage, en % de la consommation annuelle totale ; barres d'erreur : IC à 95 %. Quintiles de consommation par tête calculés sur l'ensemble du pays. Les cases vides correspondent à moins de 30 ménages enquêtés.</p>
+<div class="panneau"><div class="chart"><canvas id="cq"></canvas></div></div>
+
+<h2>Et chez vous ?</h2>
+<p class="note">Calcul indicatif, rien n'est enregistré ni envoyé.</p>
+<div class="panneau calc">
+ <div><label for="dep">Dépense en eau du ménage, FCFA par mois</label><input type="number" id="dep" min="0" step="500" value="3200"></div>
+ <div><label for="bud">Dépenses totales du ménage, FCFA par mois</label><input type="number" id="bud" min="1" step="5000" value="160000"></div>
+ <div style="grid-column:1/-1" id="verdict"></div>
+</div>
+
+<h2>Les 33 régions</h2>
+<p class="note">Personnes vivant dans un ménage non raccordé qui achète son eau. Cliquez sur un en-tête pour trier. Estimations régionales à marge d'erreur large.</p>
+<div class="panneau tab"><table id="tab"><thead><tr><th data-k="region">Région</th><th data-k="pers_milliers">Personnes (milliers)</th><th data-k="pct">% de la population</th><th data-k="lo">IC 95 %</th><th data-k="n_ach">Ménages enquêtés</th></tr></thead><tbody></tbody></table></div>
+
+<footer>
+<p><b>Champ, source et méthode.</b> Ménages ordinaires, Côte d'Ivoire, 2021/22. EHCVM 2021/22 (ANStat), 12 965 ménages ; estimations pondérées, intervalles de confiance à 95 % par linéarisation (66 strates, 1 081 grappes). Dépense en eau : facture d'eau courante, achats à un revendeur ou à un autre ménage, eau en bouteille ou filtrée, abonnement au réseau, annualisés (agrégat de consommation de l'EHCVM). Budget : consommation totale annuelle du ménage. Raccordé : branché au réseau d'eau courante (question 11.21). Acheteur non raccordé : non branché et achète son eau auprès de vendeurs ou d'un autre ménage (question 11.24). Seuil de 3 % : PNUD, Rapport sur le développement humain 2006 (rapporté au revenu ; ici à la consommation). Les dépenses n'incluent ni le temps de corvée ni le coût d'un branchement.</p>
+<p>Équipe Pathfinder · YAO N'Guessan Michel, ENSEA Abidjan · <a href="../">autres visualisations</a> · <a href="../telechargements/Projet2_D_cout_cache_eau.pdf">planche PDF</a> · <a href="donnees.json">données</a></p>
+</footer>
+</main>
+<script>
+const D=__DATA__;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fr=(x,d=1)=>x==null?'—':x.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const R='raccordé',A='achète (non raccordé)';
+const NOMS={"AUTONOME D'ABIDJAN":"District d'Abidjan","HAUT-SASSANDRA":"Haut-Sassandra","poro":"Poro","gbeke":"Gbêkê","INDENIE-DJUABLIN":"Indénié-Djuablin","tonkpi":"Tonkpi","yamoussoukro":"Yamoussoukro","gontougo":"Gontougo","SAN-PEDRO":"San-Pédro","kabadougou":"Kabadougou","N'ZI":"N'Zi","marahoue":"Marahoué","SUD-COMOE":"Sud-Comoé","worodougou":"Worodougou","LÔH-DJIBOUA":"Lôh-Djiboua","AGNEBY-TIASSA":"Agnéby-Tiassa","gÔh":"Gôh","cavally":"Cavally","bafing":"Bafing","bagoue":"Bagoué","belier":"Bélier","bere":"Béré","bounkani":"Bounkani","folon":"Folon","gbÔkle":"Gbôklé","GRANDS-PONTS":"Grands-Ponts","guemon":"Guémon","hambol":"Hambol","iffou":"Iffou","LA ME":"La Mé","nawa":"Nawa","tchologo":"Tchologo","moronou":"Moronou"};
+let mil='Ensemble',chart;
+const seg=document.getElementById('mil');
+['Ensemble','Urbain','Rural'].forEach(m=>{const b=document.createElement('button');b.textContent=m==='Ensemble'?'Ensemble du pays':m;b.onclick=()=>{mil=m;maj()};b.dataset.m=m;seg.appendChild(b)});
+function g(m,grp){return D.groupes.find(x=>x.milieu===m&&x.groupe===grp)}
+function maj(){
+ [...seg.children].forEach(b=>b.classList.toggle('on',b.dataset.m===mil));
+ const a=g(mil,A),r=g(mil,R);
+ const r2=x=>Math.round(x*100+1e-9)/100, pa=r2(a.part_budget), pr=r2(r.part_budget);
+ const big=(t,c)=>`<b style="color:var(${c})">${t}</b>`;
+ document.getElementById('tuiles').innerHTML=`
+ <div class="tuile" style="--c:var(--orange)">${big(fr(a.pers_millions,1)+' million'+(a.pers_millions>=1.95?'s':''),'--orange-t')}<span>de personnes vivent dans un ménage non raccordé qui achète son eau (${fr(a.part_pop_pct)} % de la population)</span></div>
+ <div class="tuile duo"><b><span style="color:var(--orange-t)">${fr(pa,2)} %</span> <span style="color:var(--gris)">/</span> <span style="color:var(--vert-t)">${fr(pr,2)} %</span></b><span>du budget consacré à l'eau (acheteurs / raccordés), soit ${fr(pa-pr,1)} point de pourcentage de plus pour les acheteurs (× ${fr(pa/pr,1)})</span></div>
+ <div class="tuile duo"><b><span style="color:var(--orange-t)">${fr(a.sup3_pct,0)} %</span> <span style="color:var(--gris)">/</span> <span style="color:var(--vert-t)">${fr(r.sup3_pct,0)} %</span></b><span>des ménages dépassent le seuil de 3 % du budget (acheteurs / raccordés)</span></div>
+ <div class="tuile duo"><b><span style="color:var(--orange-t)">${fr(a.temps_ar_min,0)} min</span> <span style="color:var(--gris)">/</span> <span style="color:var(--vert-t)">${fr(r.temps_ar_min,0)} min</span></b><span>de trajet aller-retour moyen vers la source d'eau ; dépense annuelle : ${fr(Math.round(a.depense_annuelle_FCFA/100)*100,0)} / ${fr(Math.round(r.depense_annuelle_FCFA/100)*100,0)} FCFA</span></div>`;
+ const q=D.quintiles.filter(x=>x.milieu===mil);
+ const ser=grp=>[1,2,3,4,5].map(k=>{const z=q.find(x=>x.groupe===grp&&x.quintile===k);return z&&z.part_budget!=null?z:null});
+ const sa=ser(A),sr=ser(R);
+ const lab=['20 % les plus modestes','2e quintile','3e quintile','4e quintile','20 % les plus aisés'];
+ const ds=(s,lbl,c)=>({label:lbl,data:s.map(z=>z?z.part_budget:null),backgroundColor:c,borderRadius:4,lo:s.map(z=>z?z.lo:null),hi:s.map(z=>z?z.hi:null)});
+ const data={labels:lab,datasets:[ds(sa,'Non raccordés qui achètent leur eau',css('--orange')),ds(sr,'Raccordés au réseau',css('--vert'))]};
+ const err={id:'err',afterDatasetsDraw(c){const x=c.ctx;x.save();x.strokeStyle=css('--ink');x.lineWidth=1.2;
+   c.data.datasets.forEach((d,i)=>{c.getDatasetMeta(i).data.forEach((b,j)=>{if(d.lo[j]==null)return;const y1=c.scales.y.getPixelForValue(d.lo[j]),y2=c.scales.y.getPixelForValue(d.hi[j]);x.beginPath();x.moveTo(b.x,y1);x.lineTo(b.x,y2);x.moveTo(b.x-4,y1);x.lineTo(b.x+4,y1);x.moveTo(b.x-4,y2);x.lineTo(b.x+4,y2);x.stroke()})});
+   const y3=c.scales.y.getPixelForValue(3);x.setLineDash([6,4]);x.strokeStyle=css('--ink');x.beginPath();x.moveTo(c.chartArea.left,y3);x.lineTo(c.chartArea.right,y3);x.stroke();
+   x.setLineDash([]);x.fillStyle=css('--ink');x.font='600 12px Montserrat';x.textAlign='right';x.fillText("seuil d'abordabilité : 3 %",c.chartArea.right-4,y3-6);x.restore()}};
+ const opt={responsive:true,maintainAspectRatio:false,animation:false,scales:{y:{min:0,max:5,ticks:{stepSize:1,callback:v=>fr(v,0)+' %',color:css('--gris')},grid:{color:css('--clair')}},x:{ticks:{color:css('--gris')},grid:{display:false}}},
+  plugins:{legend:{labels:{color:css('--ink')}},tooltip:{callbacks:{label:t=>`${t.dataset.label} : ${fr(t.parsed.y,2)} % (IC ${fr(t.dataset.lo[t.dataIndex],2)} à ${fr(t.dataset.hi[t.dataIndex],2)})`}}}};
+ if(chart)chart.destroy();chart=new Chart(document.getElementById('cq'),{type:'bar',data,options:opt,plugins:[err]});
+}
+maj();
+function calc(){const d=+document.getElementById('dep').value,b=+document.getElementById('bud').value,v=document.getElementById('verdict');
+ if(!(b>0)){v.textContent='';return}const p=100*d/b;
+ v.innerHTML=`Votre ménage consacre <span style="color:${p>3?css('--orange-t'):css('--vert-t')}">${fr(p,2)} %</span> de son budget à l'eau. ${p>3?'C\'est au-delà du seuil d\'abordabilité de 3 %.':'C\'est en deçà du seuil d\'abordabilité de 3 %.'} Moyenne nationale : ${fr(g('Ensemble',A).part_budget,2)} % pour les ménages qui achètent leur eau, ${fr(g('Ensemble',R).part_budget,2)} % pour les ménages raccordés.`}
+document.getElementById('dep').oninput=calc;document.getElementById('bud').oninput=calc;calc();
+let tri={k:'pers_milliers',s:-1};const tb=document.querySelector('#tab tbody');
+function tab(){const rows=[...D.regions].sort((a,b)=>{const x=tri.k==='region'?NOMS[a.region]:a[tri.k],y=tri.k==='region'?NOMS[b.region]:b[tri.k];return (x>y?1:x<y?-1:0)*tri.s});
+ tb.innerHTML=rows.map(r=>`<tr><td>${NOMS[r.region]||r.region}</td><td>${fr(r.pers_milliers,0)}</td><td>${fr(r.pct)} %</td><td>${fr(r.lo)} à ${fr(r.hi)} %</td><td>${r.n_ach}</td></tr>`).join('')}
+document.querySelectorAll('#tab th').forEach(th=>th.onclick=()=>{tri.s=tri.k===th.dataset.k?-tri.s:(th.dataset.k==='region'?1:-1);tri.k=th.dataset.k;tab()});tab();
+</script>
+</body>
+</html>

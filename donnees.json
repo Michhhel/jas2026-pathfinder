@@ -1,0 +1,773 @@
+{
+"groupes": [
+{
+"milieu": "Ensemble",
+"groupe": "raccordé",
+"n": 3645,
+"part_menages_pct": 37.2735,
+"part_pop_pct": 37.474,
+"depense_annuelle_FCFA": 40334.5872,
+"depense_annuelle_FCFA_ic_bas": 36536.2236,
+"depense_annuelle_FCFA_ic_haut": 44132.9508,
+"part_budget": 1.1271,
+"part_budget_ic_bas": 1.0631,
+"part_budget_ic_haut": 1.1912,
+"sup3_pct": 5.8863,
+"sup3_lo": 4.8833,
+"sup3_hi": 7.08,
+"pcexp_med": 605713.125,
+"temps_ar_min": 2.6631
+},
+{
+"milieu": "Ensemble",
+"groupe": "achète (non raccordé)",
+"n": 1467,
+"part_menages_pct": 13.0898,
+"part_pop_pct": 11.6456,
+"depense_annuelle_FCFA": 38140.2009,
+"depense_annuelle_FCFA_ic_bas": 34896.3504,
+"depense_annuelle_FCFA_ic_haut": 41384.0513,
+"part_budget": 1.9069,
+"part_budget_ic_bas": 1.7341,
+"part_budget_ic_haut": 2.0798,
+"sup3_pct": 16.8189,
+"sup3_lo": 13.0003,
+"sup3_hi": 21.4823,
+"pcexp_med": 481228.3438,
+"temps_ar_min": 38.8789,
+"pers_millions": 3.4715
+},
+{
+"milieu": "Ensemble",
+"groupe": "ne paie pas / autre",
+"n": 7853,
+"part_menages_pct": 49.6367,
+"part_pop_pct": 50.8804,
+"depense_annuelle_FCFA": 809.6892,
+"depense_annuelle_FCFA_ic_bas": 601.5083,
+"depense_annuelle_FCFA_ic_haut": 1017.87,
+"part_budget": 0.0323,
+"part_budget_ic_bas": 0.0251,
+"part_budget_ic_haut": 0.0395,
+"sup3_pct": 0.0748,
+"sup3_lo": 0.0304,
+"sup3_hi": 0.1843,
+"pcexp_med": 394783.0312,
+"temps_ar_min": 33.8585
+},
+{
+"milieu": "Urbain",
+"groupe": "raccordé",
+"n": 2602,
+"part_menages_pct": 55.9936,
+"part_pop_pct": 58.5894,
+"depense_annuelle_FCFA": 44728.6088,
+"depense_annuelle_FCFA_ic_bas": 40231.7201,
+"depense_annuelle_FCFA_ic_haut": 49225.4974,
+"part_budget": 1.167,
+"part_budget_ic_bas": 1.0939,
+"part_budget_ic_haut": 1.2401,
+"sup3_pct": 6.1936,
+"sup3_lo": 5.0234,
+"sup3_hi": 7.6145,
+"pcexp_med": 664303.2812,
+"temps_ar_min": 2.4242
+},
+{
+"milieu": "Urbain",
+"groupe": "achète (non raccordé)",
+"n": 655,
+"part_menages_pct": 15.5252,
+"part_pop_pct": 13.344,
+"depense_annuelle_FCFA": 42603.9485,
+"depense_annuelle_FCFA_ic_bas": 37414.7104,
+"depense_annuelle_FCFA_ic_haut": 47793.1866,
+"part_budget": 1.9429,
+"part_budget_ic_bas": 1.6858,
+"part_budget_ic_haut": 2.2,
+"sup3_pct": 17.9099,
+"sup3_lo": 12.3105,
+"sup3_hi": 25.3207,
+"pcexp_med": 584082.9375,
+"temps_ar_min": 27.0644,
+"pers_millions": 2.0963
+},
+{
+"milieu": "Urbain",
+"groupe": "ne paie pas / autre",
+"n": 1986,
+"part_menages_pct": 28.4811,
+"part_pop_pct": 28.0666,
+"depense_annuelle_FCFA": 1493.0761,
+"depense_annuelle_FCFA_ic_bas": 902.4083,
+"depense_annuelle_FCFA_ic_haut": 2083.7439,
+"part_budget": 0.0493,
+"part_budget_ic_bas": 0.0332,
+"part_budget_ic_haut": 0.0654,
+"sup3_pct": 0.1041,
+"sup3_lo": 0.0259,
+"sup3_hi": 0.4171,
+"pcexp_med": 449652.9219,
+"temps_ar_min": 18.3029
+},
+{
+"milieu": "Rural",
+"groupe": "raccordé",
+"n": 1043,
+"part_menages_pct": 14.773,
+"part_pop_pct": 13.948,
+"depense_annuelle_FCFA": 20316.7434,
+"depense_annuelle_FCFA_ic_bas": 17274.0506,
+"depense_annuelle_FCFA_ic_haut": 23359.4362,
+"part_budget": 0.9456,
+"part_budget_ic_bas": 0.8254,
+"part_budget_ic_haut": 1.0657,
+"sup3_pct": 4.4863,
+"sup3_lo": 3.1479,
+"sup3_hi": 6.3566,
+"pcexp_med": 489894.5,
+"temps_ar_min": 3.7616
+},
+{
+"milieu": "Rural",
+"groupe": "achète (non raccordé)",
+"n": 812,
+"part_menages_pct": 10.1625,
+"part_pop_pct": 9.7533,
+"depense_annuelle_FCFA": 29943.848,
+"depense_annuelle_FCFA_ic_bas": 27050.8231,
+"depense_annuelle_FCFA_ic_haut": 32836.8729,
+"part_budget": 1.8409,
+"part_budget_ic_bas": 1.6707,
+"part_budget_ic_haut": 2.0111,
+"sup3_pct": 14.8157,
+"sup3_lo": 11.7489,
+"sup3_hi": 18.5151,
+"pcexp_med": 410879.1406,
+"temps_ar_min": 56.9193,
+"pers_millions": 1.3752
+},
+{
+"milieu": "Rural",
+"groupe": "ne paie pas / autre",
+"n": 5867,
+"part_menages_pct": 75.0645,
+"part_pop_pct": 76.2987,
+"depense_annuelle_FCFA": 498.0347,
+"depense_annuelle_FCFA_ic_bas": 356.9752,
+"depense_annuelle_FCFA_ic_haut": 639.0942,
+"part_budget": 0.0245,
+"part_budget_ic_bas": 0.017,
+"part_budget_ic_haut": 0.0321,
+"sup3_pct": 0.0615,
+"sup3_lo": 0.0188,
+"sup3_hi": 0.2008,
+"pcexp_med": 377106.5625,
+"temps_ar_min": 40.7749
+}
+],
+"quintiles": [
+{
+"groupe": "raccordé",
+"quintile": 1,
+"n": 274,
+"part_budget": 1.5788,
+"lo": 1.2625,
+"hi": 1.8951,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 2,
+"n": 458,
+"part_budget": 1.2185,
+"lo": 1.076,
+"hi": 1.361,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 3,
+"n": 608,
+"part_budget": 1.015,
+"lo": 0.9043,
+"hi": 1.1256,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 4,
+"n": 884,
+"part_budget": 1.1401,
+"lo": 1.03,
+"hi": 1.2503,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 5,
+"n": 1421,
+"part_budget": 1.0939,
+"lo": 0.9952,
+"hi": 1.1926,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 1,
+"n": 197,
+"part_budget": 2.7,
+"lo": 2.217,
+"hi": 3.1829,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 2,
+"n": 287,
+"part_budget": 1.8612,
+"lo": 1.6319,
+"hi": 2.0904,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 3,
+"n": 287,
+"part_budget": 1.9371,
+"lo": 1.6822,
+"hi": 2.1919,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 4,
+"n": 346,
+"part_budget": 1.9749,
+"lo": 1.6969,
+"hi": 2.2528,
+"milieu": "Ensemble"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 5,
+"n": 350,
+"part_budget": 1.642,
+"lo": 1.4399,
+"hi": 1.8441,
+"milieu": "Ensemble"
+},
+{
+"groupe": "raccordé",
+"quintile": 1,
+"n": 135,
+"part_budget": 1.9038,
+"lo": 1.4351,
+"hi": 2.3725,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 2,
+"n": 253,
+"part_budget": 1.3345,
+"lo": 1.1358,
+"hi": 1.5332,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 3,
+"n": 408,
+"part_budget": 1.0758,
+"lo": 0.9471,
+"hi": 1.2046,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 4,
+"n": 646,
+"part_budget": 1.1861,
+"lo": 1.0572,
+"hi": 1.3149,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 5,
+"n": 1160,
+"part_budget": 1.1112,
+"lo": 1.0058,
+"hi": 1.2167,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 1,
+"n": 49,
+"part_budget": 3.6675,
+"lo": 2.6392,
+"hi": 4.6958,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 2,
+"n": 80,
+"part_budget": 2.0517,
+"lo": 1.6134,
+"hi": 2.4899,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 3,
+"n": 119,
+"part_budget": 2.0052,
+"lo": 1.6162,
+"hi": 2.3941,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 4,
+"n": 182,
+"part_budget": 2.0341,
+"lo": 1.6718,
+"hi": 2.3964,
+"milieu": "Urbain"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 5,
+"n": 225,
+"part_budget": 1.6187,
+"lo": 1.3863,
+"hi": 1.8511,
+"milieu": "Urbain"
+},
+{
+"groupe": "raccordé",
+"quintile": 1,
+"n": 139,
+"part_budget": 1.0596,
+"lo": 0.8182,
+"hi": 1.301,
+"milieu": "Rural"
+},
+{
+"groupe": "raccordé",
+"quintile": 2,
+"n": 205,
+"part_budget": 1.0191,
+"lo": 0.8513,
+"hi": 1.1869,
+"milieu": "Rural"
+},
+{
+"groupe": "raccordé",
+"quintile": 3,
+"n": 200,
+"part_budget": 0.8311,
+"lo": 0.621,
+"hi": 1.0412,
+"milieu": "Rural"
+},
+{
+"groupe": "raccordé",
+"quintile": 4,
+"n": 238,
+"part_budget": 0.9369,
+"lo": 0.7711,
+"hi": 1.1027,
+"milieu": "Rural"
+},
+{
+"groupe": "raccordé",
+"quintile": 5,
+"n": 261,
+"part_budget": 0.9458,
+"lo": 0.6793,
+"hi": 1.2123,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 1,
+"n": 148,
+"part_budget": 2.122,
+"lo": 1.6889,
+"hi": 2.5552,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 2,
+"n": 207,
+"part_budget": 1.73,
+"lo": 1.4844,
+"hi": 1.9756,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 3,
+"n": 168,
+"part_budget": 1.8324,
+"lo": 1.5998,
+"hi": 2.065,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 4,
+"n": 164,
+"part_budget": 1.8402,
+"lo": 1.4181,
+"hi": 2.2623,
+"milieu": "Rural"
+},
+{
+"groupe": "achète (non raccordé)",
+"quintile": 5,
+"n": 125,
+"part_budget": 1.7443,
+"lo": 1.4671,
+"hi": 2.0216,
+"milieu": "Rural"
+}
+],
+"regions": [
+{
+"region": "AUTONOME D'ABIDJAN",
+"pers_milliers": 995.163,
+"pop_region_milliers": 6411.407,
+"pct": 15.522,
+"lo": 10.082,
+"hi": 23.142,
+"n_ach": 135,
+"n": 983
+},
+{
+"region": "gontougo",
+"pers_milliers": 265.903,
+"pop_region_milliers": 930.953,
+"pct": 28.562,
+"lo": 21.447,
+"hi": 36.929,
+"n_ach": 124,
+"n": 408
+},
+{
+"region": "gbeke",
+"pers_milliers": 242.209,
+"pop_region_milliers": 1372.247,
+"pct": 17.651,
+"lo": 12.113,
+"hi": 24.999,
+"n_ach": 81,
+"n": 503
+},
+{
+"region": "SUD-COMOE",
+"pers_milliers": 173.076,
+"pop_region_milliers": 796.118,
+"pct": 21.74,
+"lo": 14.029,
+"hi": 32.106,
+"n_ach": 105,
+"n": 408
+},
+{
+"region": "AGNEBY-TIASSA",
+"pers_milliers": 165.743,
+"pop_region_milliers": 878.334,
+"pct": 18.87,
+"lo": 11.224,
+"hi": 29.968,
+"n_ach": 67,
+"n": 408
+},
+{
+"region": "marahoue",
+"pers_milliers": 141.836,
+"pop_region_milliers": 995.21,
+"pct": 14.252,
+"lo": 8.952,
+"hi": 21.934,
+"n_ach": 85,
+"n": 480
+},
+{
+"region": "hambol",
+"pers_milliers": 116.593,
+"pop_region_milliers": 620.781,
+"pct": 18.782,
+"lo": 13.031,
+"hi": 26.302,
+"n_ach": 64,
+"n": 336
+},
+{
+"region": "HAUT-SASSANDRA",
+"pers_milliers": 106.703,
+"pop_region_milliers": 1764.575,
+"pct": 6.047,
+"lo": 3.079,
+"hi": 11.537,
+"n_ach": 44,
+"n": 600
+},
+{
+"region": "tonkpi",
+"pers_milliers": 105.178,
+"pop_region_milliers": 1407.756,
+"pct": 7.471,
+"lo": 4.186,
+"hi": 12.986,
+"n_ach": 34,
+"n": 504
+},
+{
+"region": "gÔh",
+"pers_milliers": 99.072,
+"pop_region_milliers": 999.371,
+"pct": 9.913,
+"lo": 6.543,
+"hi": 14.746,
+"n_ach": 41,
+"n": 479
+},
+{
+"region": "SAN-PEDRO",
+"pers_milliers": 98.323,
+"pop_region_milliers": 1075.892,
+"pct": 9.139,
+"lo": 5.588,
+"hi": 14.596,
+"n_ach": 43,
+"n": 444
+},
+{
+"region": "INDENIE-DJUABLIN",
+"pers_milliers": 96.693,
+"pop_region_milliers": 726.688,
+"pct": 13.306,
+"lo": 7.36,
+"hi": 22.869,
+"n_ach": 59,
+"n": 384
+},
+{
+"region": "LÔH-DJIBOUA",
+"pers_milliers": 89.62,
+"pop_region_milliers": 1118.933,
+"pct": 8.009,
+"lo": 4.332,
+"hi": 14.342,
+"n_ach": 27,
+"n": 432
+},
+{
+"region": "iffou",
+"pers_milliers": 88.439,
+"pop_region_milliers": 383.973,
+"pct": 23.033,
+"lo": 15.382,
+"hi": 33.004,
+"n_ach": 61,
+"n": 288
+},
+{
+"region": "belier",
+"pers_milliers": 73.06,
+"pop_region_milliers": 421.536,
+"pct": 17.332,
+"lo": 11.445,
+"hi": 25.379,
+"n_ach": 63,
+"n": 312
+},
+{
+"region": "LA ME",
+"pers_milliers": 67.307,
+"pop_region_milliers": 737.056,
+"pct": 9.132,
+"lo": 5.315,
+"hi": 15.249,
+"n_ach": 32,
+"n": 384
+},
+{
+"region": "GRANDS-PONTS",
+"pers_milliers": 62.672,
+"pop_region_milliers": 456.442,
+"pct": 13.731,
+"lo": 7.762,
+"hi": 23.136,
+"n_ach": 41,
+"n": 312
+},
+{
+"region": "moronou",
+"pers_milliers": 60.292,
+"pop_region_milliers": 446.044,
+"pct": 13.517,
+"lo": 8.549,
+"hi": 20.719,
+"n_ach": 52,
+"n": 311
+},
+{
+"region": "nawa",
+"pers_milliers": 58.308,
+"pop_region_milliers": 1182.138,
+"pct": 4.932,
+"lo": 2.423,
+"hi": 9.78,
+"n_ach": 25,
+"n": 527
+},
+{
+"region": "N'ZI",
+"pers_milliers": 57.768,
+"pop_region_milliers": 258.264,
+"pct": 22.368,
+"lo": 15.847,
+"hi": 30.597,
+"n_ach": 66,
+"n": 264
+},
+{
+"region": "bere",
+"pers_milliers": 52.609,
+"pop_region_milliers": 499.189,
+"pct": 10.539,
+"lo": 5.553,
+"hi": 19.096,
+"n_ach": 32,
+"n": 312
+},
+{
+"region": "worodougou",
+"pers_milliers": 48.081,
+"pop_region_milliers": 435.958,
+"pct": 11.029,
+"lo": 4.949,
+"hi": 22.788,
+"n_ach": 24,
+"n": 264
+},
+{
+"region": "yamoussoukro",
+"pers_milliers": 47.019,
+"pop_region_milliers": 428.108,
+"pct": 10.983,
+"lo": 5.949,
+"hi": 19.398,
+"n_ach": 46,
+"n": 312
+},
+{
+"region": "poro",
+"pers_milliers": 28.209,
+"pop_region_milliers": 1055.339,
+"pct": 2.673,
+"lo": 1.348,
+"hi": 5.229,
+"n_ach": 14,
+"n": 455
+},
+{
+"region": "bounkani",
+"pers_milliers": 26.935,
+"pop_region_milliers": 433.143,
+"pct": 6.218,
+"lo": 2.494,
+"hi": 14.666,
+"n_ach": 15,
+"n": 264
+},
+{
+"region": "guemon",
+"pers_milliers": 22.098,
+"pop_region_milliers": 944.184,
+"pct": 2.34,
+"lo": 1.09,
+"hi": 4.953,
+"n_ach": 11,
+"n": 480
+},
+{
+"region": "gbÔkle",
+"pers_milliers": 19.318,
+"pop_region_milliers": 467.572,
+"pct": 4.132,
+"lo": 0.846,
+"hi": 17.876,
+"n_ach": 15,
+"n": 336
+},
+{
+"region": "bagoue",
+"pers_milliers": 19.035,
+"pop_region_milliers": 523.267,
+"pct": 3.638,
+"lo": 1.432,
+"hi": 8.931,
+"n_ach": 17,
+"n": 312
+},
+{
+"region": "tchologo",
+"pers_milliers": 15.61,
+"pop_region_milliers": 611.708,
+"pct": 2.552,
+"lo": 1.002,
+"hi": 6.347,
+"n_ach": 11,
+"n": 359
+},
+{
+"region": "kabadougou",
+"pers_milliers": 8.948,
+"pop_region_milliers": 293.95,
+"pct": 3.044,
+"lo": 1.078,
+"hi": 8.294,
+"n_ach": 9,
+"n": 240
+},
+{
+"region": "folon",
+"pers_milliers": 7.513,
+"pop_region_milliers": 148.3,
+"pct": 5.066,
+"lo": 1.79,
+"hi": 13.509,
+"n_ach": 15,
+"n": 264
+},
+{
+"region": "cavally",
+"pers_milliers": 7.238,
+"pop_region_milliers": 718.369,
+"pct": 1.008,
+"lo": 0.245,
+"hi": 4.05,
+"n_ach": 3,
+"n": 360
+},
+{
+"region": "bafing",
+"pers_milliers": 4.915,
+"pop_region_milliers": 266.609,
+"pct": 1.843,
+"lo": 0.428,
+"hi": 7.59,
+"n_ach": 6,
+"n": 240
+}
+]
+}
